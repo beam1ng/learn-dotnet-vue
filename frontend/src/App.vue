@@ -1,47 +1,57 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+  import {ref} from 'vue';
+  // export default{
+  //   setup() {
+  //     return {
+  //       clickedCount,
+  //       r,g,b,onClicked
+  //     }
+  //   }
+  // }
+
+  var clickedCount = ref(0);
+  
+  var h1Html ={
+    style:{
+      color:'',
+      isValid:function isValid(){
+        return this.color!='';
+      }
+    },
+    isValid:function isValid(){
+      return this.style.isValid()
+    }
+  }
+  
+  var r = 250;
+  var g = 100;
+  var b= 50;
+
+  function onClicked(){
+    clickedCount.value+=1;
+    h1Html.style.color = 'rgb('+Array.from([0,0,0],()=>Math.floor(Math.random() * 255)).join(',')+')'
+    console.debug('clicked ' +clickedCount.value + ' times')
+  }
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <h1>Playground</h1>
+  <p>
+    <button @click="onClicked" position="flex">just a button</button>
+    <p position="flex">Clicked count: {{ clickedCount }}</p>
+    <p position="flex" style="font-weight:bold; font-size:60px">
+      This is <span :style="`color:rgb(${r},${g},${b})`">XDDD</span>
+    </p>
+    <p id="boomParagraph" v-if="clickedCount >=5">
+      BOOOOM
+    </p> 
+  </p>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+  #boomParagraph{
+    font-size: 50px;
+    border-radius:25%;
+    color: #F30;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
