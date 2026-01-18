@@ -1,13 +1,5 @@
 <script setup lang="ts">
-  import {ref} from 'vue';
-  // export default{
-  //   setup() {
-  //     return {
-  //       clickedCount,
-  //       r,g,b,onClicked
-  //     }
-  //   }
-  // }
+  import {computed, reactive, ref, warn, watch} from 'vue';
 
   var clickedCount = ref(0);
   
@@ -22,16 +14,18 @@
       return this.style.isValid()
     }
   }
-  
-  var r = 250;
-  var g = 100;
-  var b= 50;
+
+  var jsValue=ref('');
+  var watchedV = reactive({value: 0,otherThing:0});
+  var theDouble = computed(()=>watchedV.value * 2);
 
   function onClicked(){
     clickedCount.value+=1;
     h1Html.style.color = 'rgb('+Array.from([0,0,0],()=>Math.floor(Math.random() * 255)).join(',')+')'
     console.debug('clicked ' +clickedCount.value + ' times')
   }
+
+  watch(()=>watchedV.value,()=>{alert('xd?')})
 </script>
 
 <template>
@@ -40,11 +34,20 @@
     <button @click="onClicked" position="flex">just a button</button>
     <p position="flex">Clicked count: {{ clickedCount }}</p>
     <p position="flex" style="font-weight:bold; font-size:60px">
-      This is <span :style="`color:rgb(${r},${g},${b})`">XDDD</span>
+      This is <span :style="h1Html.style">XDDD</span>
     </p>
     <p id="boomParagraph" v-if="clickedCount >=5">
       BOOOOM
     </p> 
+    
+    <input @keyup="(event)=>{console.log(jsValue);}" type="checkbox" v-model="jsValue"></input>
+    <textarea @keyup="(event)=>{console.log(jsValue);}" v-model.number='jsValue'></textarea>
+    <p @click="()=>{watchedV.value+=2;console.log(watchedV);}">
+      {{ watchedV }}
+      <!-- {{ theDouble }} -->
+    </p>
+    <template >
+    </template>
   </p>
 </template>
 
