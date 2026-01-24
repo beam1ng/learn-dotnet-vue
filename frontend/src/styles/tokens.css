@@ -1,0 +1,17 @@
+:root{
+    --ash-grey: #cad2c5ff;
+    --muted-teal: #84a98cff;
+    --deep-teal: #52796fff;
+    --dark-slate-grey: #354f52ff;
+    --charcoal-blue: #2f3e46ff;
+    --tmp-red: rgba(236, 143, 158, 1);
+    --tmp-green: rgba(158, 236, 143, 1);
+    --tmp-yellow: rgba(250, 242, 130, 1);
+    
+    --c-light: #eee;
+    --c-light-grey: var(--ash-grey);
+    --c-primary: var(--muted-teal);
+    --c-secondary: var(--deep-teal);
+    --c-dark: var(--charcoal-blue);
+    --c-exit: var(--tmp-red);
+}
