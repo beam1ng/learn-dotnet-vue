@@ -14,3 +14,6 @@ At least it seems to only provide just that.
 - retrieve guesses from the backend
 - implement difficulity feature
 - move all critical data to the backend or use some cryptography stuff to make the validation local etc
+
+## Attributions
+- <a href="https://www.flaticon.com/free-icons/reset" title="reset icons">Reset icons created by inkubators - Flaticon<a>

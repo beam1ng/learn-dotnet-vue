@@ -4,18 +4,23 @@ import Footer from './Footer.vue'
 import Wordle from './Wordle.vue';
 import { ref } from 'vue';
 
-const shouldBlur = ref(false);
-const blurSize = ref(2);
+var wordleEnabled = ref(true);
 
+function OpenTarget(targetName:string){
+  console.log('xdddd');
+  
+  if(targetName=='wordle')
+    wordleEnabled.value = true;
+}
 </script>
 
 <template>
-  <div id="overlay"></div>
-  <div class="page" >
-    <Header />
+  <div id="overlay" v-if="wordleEnabled"></div>
+  <div class="page">
+    <Header @open="(targetName: string)=>{OpenTarget(targetName)}" />
 
     <div class="content">
-      <Wordle/>
+      <Wordle v-if="wordleEnabled" @close-modal="()=>{wordleEnabled=false;}"/>
     </div>
 
     <Footer />

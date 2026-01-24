@@ -1,16 +1,21 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { nextTick, reactive, ref } from 'vue';
 
+const emits = defineEmits<{
+    closeModal:[];
+}>();
 
 const rowsCount = 5;
 const tilesPerRow = 5;
 
 var currentWord = '';
-var submittedWords: Array<string> = [];
+var submittedWords: string[]= reactive([]); 
 
 const currentRow = ref(0);
 const currentColumn = ref(0);
 const solution: string = "world"
+
+const wordleContainer = ref<HTMLElement|null>(null);
 
 function GetLetterAt(r_index: number, c_index: number) {
     if (r_index < currentRow.value)
@@ -45,13 +50,20 @@ function GetTileClasses(r_index: number, c_index: number) {
     return classes;
 }
 
-function processKey(event: KeyboardEvent) {
-    console.log(currentRow.value, currentColumn.value, currentWord);
+function SubmitWord(){
+    if (currentWord.length != 5)
+            return;
+    
+    submittedWords.push(currentWord);
+    currentWord = '';
+    currentColumn.value = 0;
+    currentRow.value += 1;
+}
 
+function processKey(event: KeyboardEvent) {
 
     if (event.type != 'keydown')
         return;
-
 
     if (event.key == "Backspace") {
         if (currentWord.length <= 0)
@@ -68,19 +80,22 @@ function processKey(event: KeyboardEvent) {
         currentWord += event.key;
         currentColumn.value++;
 
-        console.log(currentRow.value, currentColumn.value, currentWord);
 
     } else if (event.key == "Enter") {
-        if (currentWord.length != 5)
-            return;
-
-        submittedWords.push(currentWord);
-        currentWord = '';
-        currentColumn.value = 0;
-        currentRow.value += 1;
+        SubmitWord();
     }
 
     return;
+}
+
+function resetPuzzle(){
+    submittedWords=[];
+    currentColumn.value = 0;
+    currentRow.value = 0;
+    currentWord = '';
+    nextTick(()=>{
+        wordleContainer.value?.focus();
+    })
 }
 
 </script>
@@ -90,11 +105,18 @@ function processKey(event: KeyboardEvent) {
         <div class="container" ref="wordleContainer" tabindex="0" @keydown="processKey">
             <div class = "cover">
                 <div class="modalTop">
-                    <button class="modalButton closeButtonContainer">CLOSE</button>
+                    <button class="modalButton closeButtonContainer" @click="$emit('closeModal')">CLOSE</button>
                 </div>
                 <div class="modalBottom">
-                    <button class="modalButton hint">HINT</button>
-                    <button class="modalButton guess">GUESS</button>
+                    <div class="left">
+                        <button class="modalButton reset" @click="resetPuzzle">
+                            <img src="../public/reset.png"/>
+                        </button>
+                    </div>
+                    <div class="right">
+                        <button class="modalButton hint">HINT</button>
+                        <button class="modalButton guess" @click="SubmitWord">GUESS</button>
+                    </div>
                 </div>
             </div>
 
@@ -130,8 +152,18 @@ function processKey(event: KeyboardEvent) {
     position:relative;
     display:flex;
     margin-top:auto;
-    justify-content: end;
     top:25px;
+}
+
+.modalBottom .left{
+    margin-right:auto;
+    margin-left: 8px;
+}
+
+.modalBottom .right{
+    margin-left:auto;
+    margin-right: 8px;
+    display:flex;
     gap:10px;
 }
 
@@ -155,19 +187,52 @@ function processKey(event: KeyboardEvent) {
     right:8px;
     background-color: var(--c-exit);
 }
+.modalButton.closeButtonContainer:hover{
+    background-color: hsl(from var(--c-exit) h s calc(l * 0.75));
+}
+.modalButton.closeButtonContainer:active {
+    background-color: hsl(from var(--c-exit) h s calc(l * 0.65));
+}
 
 .modalButton.hint{
     position: relative;
-    right: 8px;
+    
     background-color: var(--tmp-yellow);
+}
+.modalButton.hint:hover{
+    background-color: hsl(from var(--tmp-yellow) h s calc(l * 0.75));
+}
+.modalButton.hint:active {
+    background-color: hsl(from var(--tmp-yellow) h s calc(l * 0.65));
 }
 
 .modalButton.guess{
     position: relative;
-    right: 8px;
+    
     color:var(--c-dark);
     background-color: var(--c-light);
     padding:auto 220px;
+}
+.modalButton.guess:hover{
+    background-color: hsl(from var(--c-light) h s calc(l * 0.85));
+}
+.modalButton.guess:active {
+    background-color: hsl(from var(--c-light) h s calc(l * 0.75));
+}
+
+.modalButton.reset{
+    width:50px;
+    height:50px;
+    padding:0px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalButton.reset img{
+    width:100%;
+    height:100%;
+    object-fit: contain;
 }
 
 .tile {
