@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { nextTick, reactive, ref } from 'vue';
+import { nextTick, onUpdated, reactive, ref, watch, watchEffect } from 'vue';
 
 const emits = defineEmits<{
     closeModal:[];
@@ -10,6 +10,7 @@ const tilesPerRow = 5;
 
 var currentWord = '';
 var submittedWords: string[]= reactive([]); 
+var isWin = ref(false);
 
 const currentRow = ref(0);
 const currentColumn = ref(0);
@@ -26,17 +27,19 @@ function GetLetterAt(r_index: number, c_index: number) {
 
 function GetTileClasses(r_index: number, c_index: number) {
     const classes = [];
-    const submitted = r_index < currentRow.value;
+    const submitted = r_index < submittedWords.length;
     if (submitted) {
         const guess: string = GetLetterAt(r_index, c_index);
         // either dim as a miss, yellow as a hint or green as a success
-        if (guess == solution.charAt(c_index))
+        if (guess == solution.charAt(c_index)){
             classes.push('success')
-
-        if (solution.includes(guess))
+        }
+        else if (solution.includes(guess)){
             classes.push('hint')
-
-        classes.push('miss')
+        }
+        else{
+            classes.push('miss')
+        }
 
         return classes;
     }
@@ -55,6 +58,14 @@ function SubmitWord(){
             return;
     
     submittedWords.push(currentWord);
+
+    if(currentWord == solution){
+        isWin.value = true;
+        nextTick(()=>setTimeout(()=>alert('you won'),0));
+        //todo: handle a win 
+        return;
+    }
+
     currentWord = '';
     currentColumn.value = 0;
     currentRow.value += 1;
@@ -93,9 +104,10 @@ function resetPuzzle(){
     currentColumn.value = 0;
     currentRow.value = 0;
     currentWord = '';
+    isWin.value = false;
     nextTick(()=>{
         wordleContainer.value?.focus();
-    })
+    });
 }
 
 </script>
@@ -121,7 +133,6 @@ function resetPuzzle(){
             </div>
 
             <div class="row" v-for="(_, r_index) in rowsCount" :class="{ invisible: r_index > currentRow }">
-
                 <div class="tile caveat-brush-regular" v-for="(_, c_index) in tilesPerRow"
                     :key="r_index + ',' + c_index" :class="GetTileClasses(r_index, c_index)"
                     v-text="GetLetterAt(r_index, c_index)">

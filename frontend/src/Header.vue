@@ -7,16 +7,16 @@ const emits = defineEmits<{
 
 <template>
     <div class="header">
-        <div class="title">TITLETITLE</div>
+        <div class="title">WorDLe</div>
         <ul class="toolbar-navigation">
-            <li>sd</li>
-            <li>sd</li>
-            <li>sd</li>
+            <li>as</li>
+            <li>a</li>
+            <li>portfolio</li>
             <button class="appButton" @click="()=>{$emit(`open`, 'wordle')}">WORDLE</button>
         </ul>
         <div class="separator"></div>
-        <div>some image</div>assf
-        <div>Hamburger</div>
+        <div>cosmic</div>
+        <div style="font-style: italic;">rays</div>
     </div>
 </template>
 

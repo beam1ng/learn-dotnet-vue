@@ -4,9 +4,9 @@
 
 <template>
     <div class="footer">
-        <div>something</div>
+        <div></div>
         <div class="separator"></div>
-        <div>something else</div>
+        <div style="font-style: italic;">Jakub Augustyniak</div>
     </div>
 </template>
 
