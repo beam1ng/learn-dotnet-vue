@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260122190232_UpdateWordModel")]
-    partial class UpdateWordModel
+    [Migration("20260206194736_UpdateWordModel3")]
+    partial class UpdateWordModel3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace Backend.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("WordEntry", b =>
+            modelBuilder.Entity("models.WordModels.WordEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,19 +32,28 @@ namespace Backend.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<long>("Count")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Word")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Words");
+                });
+
+            modelBuilder.Entity("models.WordModels.WordFives", b =>
+                {
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
                     b.Property<string>("Word")
                         .IsRequired()
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("longtext");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("Word")
-                        .IsUnique();
-
-                    b.ToTable("Words");
+                    b.ToTable("Fives");
                 });
 #pragma warning restore 612, 618
         }

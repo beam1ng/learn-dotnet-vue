@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using other;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +26,7 @@ app.UseHttpsRedirection();
 
 app.MapPost("/import", async (AppDbContext db) =>
 {
-    var importer = new WordDataImporter(db);
+    var importer = new other.WordDataImporter(db);
     //todo: get from env
     await importer.ImportAsync(@"");
     return Results.Ok();
