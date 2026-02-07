@@ -1,1 +1,13 @@
-POST http://localhost:5124/import
+# POST http://localhost:5124/import
+
+POST http://localhost:5124/api/words/random
+Content-Type: application/json
+
+{
+    "frequencyRankTop":2500,
+    "frequencyRankBottom":5000
+}
+
+###
+
+POST http://localhost:5124/api/words/random

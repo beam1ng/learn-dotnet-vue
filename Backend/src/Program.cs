@@ -1,35 +1,36 @@
+using interfaces;
 using Microsoft.EntityFrameworkCore;
 using other;
+using services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
+builder.Services.AddCors((options) =>
+{
+    options.AddPolicy("DevPolicy", p =>
+    {
+        p
+            .AllowAnyOrigin()
+            .AllowAnyHeader();
+    });
+});
+
+builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(
     connectionString, 
     ServerVersion.AutoDetect(connectionString)
 ));
 
+builder.Services.AddScoped<IWordsService,WordsService>();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment()) 
-{
-    app.MapOpenApi();
-}
-
 app.UseHttpsRedirection();
-
-app.MapPost("/import", async (AppDbContext db) =>
-{
-    var importer = new other.WordDataImporter(db);
-    //todo: get from env
-    await importer.ImportAsync(@"");
-    return Results.Ok();
-});
-
+app.UseCors("DevPolicy");
+app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.Run();

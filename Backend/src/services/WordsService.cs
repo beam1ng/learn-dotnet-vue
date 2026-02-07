@@ -1,6 +1,7 @@
 using System.Text;
 using dtos.words;
 using interfaces;
+using other;
 
 namespace services;
 
@@ -12,9 +13,14 @@ public class WordsService : IWordsService
 
     public async Task<string> GetRandomWordInRange(int frequencyRankTop = 0, int frequencyRankBottom = 500)
     {
+        var recordsCount = _context.Fives.Count();
+
         var wordEntry = _context.Fives
             .OrderByDescending(w=>w.Count)
-            .ElementAt(Random.Shared.Next(frequencyRankTop,frequencyRankBottom));
+            .Skip(Random.Shared.Next(
+                frequencyRankTop,
+                (int)MathF.Min(recordsCount ,frequencyRankBottom)))
+            .FirstOrDefault();
 
         if(wordEntry is null)
         {
@@ -35,6 +41,7 @@ public class WordsService : IWordsService
 
     public async Task<WordDto> GetRandomWord(GetRandomWordDto getWordDto)
     {
+
         string randomWord = await GetRandomWordInRange(
             frequencyRankTop: getWordDto.frequencyRankTop,
             frequencyRankBottom: getWordDto.frequencyRankBottom);

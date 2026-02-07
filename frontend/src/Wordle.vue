@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { nextTick, onUpdated, reactive, ref, watch, watchEffect } from 'vue';
+import axios, { HttpStatusCode } from 'axios';
+import { nextTick, onMounted, reactive, ref } from 'vue';
 
 const emits = defineEmits<{
     closeModal:[];
@@ -14,9 +15,20 @@ var isWin = ref(false);
 
 const currentRow = ref(0);
 const currentColumn = ref(0);
-const solution: string = "world"
+var solution = ref("")
 
 const wordleContainer = ref<HTMLElement|null>(null);
+
+onMounted(()=>resetSolution());
+
+async function resetSolution(){
+    var solutionData = await axios.post('http://localhost:5124/api/words/random',{});
+    if(solutionData.status==HttpStatusCode.Ok){
+        solution.value = solutionData.data['word'];
+    }
+}
+
+
 
 function GetLetterAt(r_index: number, c_index: number) {
     if (r_index < currentRow.value)
@@ -31,10 +43,10 @@ function GetTileClasses(r_index: number, c_index: number) {
     if (submitted) {
         const guess: string = GetLetterAt(r_index, c_index);
         // either dim as a miss, yellow as a hint or green as a success
-        if (guess == solution.charAt(c_index)){
+        if (guess == solution.value.charAt(c_index)){
             classes.push('success')
         }
-        else if (solution.includes(guess)){
+        else if (solution.value.includes(guess)){
             classes.push('hint')
         }
         else{
@@ -59,9 +71,9 @@ function SubmitWord(){
     
     submittedWords.push(currentWord);
 
-    if(currentWord == solution){
+    if(currentWord == solution.value){
         isWin.value = true;
-        nextTick(()=>setTimeout(()=>alert('you won'),0));
+        nextTick(()=>setTimeout(()=>alert('you won'),0))
         //todo: handle a win 
         return;
     }
@@ -105,6 +117,7 @@ function resetPuzzle(){
     currentRow.value = 0;
     currentWord = '';
     isWin.value = false;
+    setTimeout(()=>resetSolution(),0);
     nextTick(()=>{
         wordleContainer.value?.focus();
     });
